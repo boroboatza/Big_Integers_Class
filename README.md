@@ -1,1 +1,2 @@
 # Big_Integers_Class
+A class for representing big integers, also known as arbitrarily large integers or long integers, is a class that can store and manipulate integers with a size larger than the maximum size that can be stored in a standard integer data type. This is useful when you need to perform calculations with numbers that are too large to fit in a standard integer data type, such as when working with very large prime numbers or performing other types of mathematical operations that involve large numbers.
