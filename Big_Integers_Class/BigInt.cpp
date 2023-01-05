@@ -502,37 +502,52 @@ BigInt operator/(const BigInt& ob1, const BigInt& ob2)
 		return result;
 	}
 	result.negativ = (ob1.negativ != ob2.negativ);
-	BigInt remainder = ob1;
-	remainder.negativ = false;
-	while (remainder >= ob2)
+	BigInt divident;
+	BigInt _ob1 = ob1;
+	divident.cifre.push_back(_ob1.cifre.back());
+	BigInt divisor = ob2;
+	int k = _ob1.cifre.size() - 1;
+	while (1)
 	{
-		// Shift the remainder left by one digit
-		BigInt shift_remainder = remainder;
-		shift_remainder.cifre.insert(shift_remainder.cifre.begin(), 0);
-
-		// Initialize a counter to store the number of times we can subtract rhs from shift_remainder
-		int counter = 0;
-		while (shift_remainder >= ob2)
+		bool flag_point = false;
+		BigInt cat = 0;
+		BigInt produs = 0;
+		do
 		{
+			while (divident <= divisor)
+			{
+				if (k)
+				{
+					k--;
+					divident.cifre.insert(divident.cifre.begin(), _ob1.cifre[k]);
+					if (!k)
+					{
+						break;
+					}
+				}
+			}
+			produs += divisor;
+			if (produs > divident)
+				break;
+			cat++;
+			if (divident.cifre[divident.cifre.back()] == 0)
+				cat--;
 
-			if (ob2.negativ)
-				shift_remainder = shift_remainder + ob2;
-			else
-				shift_remainder = shift_remainder - ob2;
-
-			counter++;
+		} while (1);
+		if (divident > divisor)
+		{
+			BigInt prod = cat * divisor;
+			divident = divident - prod;
 		}
-		counter /= 10;
-		// Update the result and the remainder
-		result.cifre.push_back(counter);
-		remainder = shift_remainder;
-	}
-	// Remove leading zeros from the result
-	while (result.cifre.size() > 0 && result.cifre.back() == 0)
-	{
-		result.cifre.pop_back();
-	}
 
+		for (int i = cat.cifre.size() - 1; i >= 0; i--)
+		{
+			result.cifre.insert(result.cifre.begin(), cat.cifre[i]);
+		}
+
+		if (!k)
+			break;
+	}
 	return result;
 }
 BigInt operator/=(BigInt& ob1, const BigInt& ob2)
@@ -569,49 +584,49 @@ BigInt operator%(const BigInt& ob1, const BigInt& ob2)
 	and to false otherwise.
 		It then returns the result.
 	*/
-	/// <summary>
-	/// 
-	///  This this function does not work if ob2 is negative.
-	///  Because the modulo operation is not defined for negative divisors, 
-	///  so the behavior of the function in this case is undefined.
-	/// 
-	/// </summary>
+	BigInt result;
 	if (ob2 == 0)
 	{
-		throw ("division by zero");
+		throw("Division by zero is not allowed");
 	}
-	if (ob1 < ob2)
+	if (ob2 > ob1)
 	{
-		return ob1;
+		result = 0;
+		return result;
 	}
-	if (ob2 == 1)
-	{
-		return 0;
-	}
-	int  i, lgcat = 0, cc = 0;
-	std::vector<int> cat(lgcat + 1);
-	BigInt t = 0;
-	auto t_lg = t.cifre.size();
-	for (i = ob1.cifre.size() - 1; t * 10 + ob1.cifre[i] < ob2; i--)
-	{
-		t *= 10; t += ob1.cifre[i];
-	}
-	for (; i >= 0; i--)
-	{
-		t = t * 10 + ob1.cifre[i];
-	}
-	for (cc = 9; cc * ob2 > t; cc--);
-	t -= cc * ob2;
-	cat[lgcat++] = cc;
-	while (t.cifre.size() > 1 && t.cifre[t.cifre.size() - 1] == 0)
-		t_lg--;
-	if (ob1.negativ)
-	{
-		t.negativ = true;
-	}
-	return t;
-}
+	BigInt _ob1 = ob1;
 
+	result.negativ = (ob1.negativ != ob2.negativ);
+	BigInt divident;
+	divident.cifre.push_back(_ob1.cifre.back());
+	BigInt divisor = ob2;
+	int k = _ob1.cifre.size() - 1;
+	while (1)
+	{
+		BigInt cat = 0;
+		BigInt produs = divisor;
+		do
+		{
+			while (divident <= divisor)
+			{
+				k--;
+				divident.cifre.insert(divident.cifre.begin(), _ob1.cifre[k]);
+			}
+			produs += divisor;
+			cat++;
+			if (divident.cifre[divident.cifre.back()] == 0)
+				cat--;
+		} while (produs <= divident);
+		BigInt prod = cat * divisor;
+		divident = divident - prod;
+		if (divident == 0)
+			break;
+		if (!k)
+			break;
+	}
+	result = divident;
+	return result;
+}
 BigInt operator%=(BigInt& ob1, const BigInt& ob2)
 {
 	/*
