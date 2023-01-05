@@ -520,10 +520,6 @@ BigInt operator/(const BigInt& ob1, const BigInt& ob2)
 				{
 					k--;
 					divident.cifre.insert(divident.cifre.begin(), _ob1.cifre[k]);
-					if (!k)
-					{
-						break;
-					}
 				}
 			}
 			produs += divisor;
